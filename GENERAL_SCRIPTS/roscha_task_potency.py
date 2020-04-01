@@ -128,7 +128,7 @@ def potency(niftipathtask,niftipathrest,maskpathtask,maskpathrest,atlas4dpath,po
     '''author . roselyne chauvin
         niftipathtask : list of path path or path to the 4d nifti file corresponding to the preprocessed task acquisition
         niftipathrest : list of path or one path to 4d nifti file(s) corresponding to the preprocessed resting state acquisition of the same subject or to the population of interest
-        potency : can be 'indiv' for 'individual potency' as the substraction of rest connectivity (**niftipathrest is a unique path**) or 'population' for population potency' as the standardization by the resting distribution (**niftipath is a list of path**)
+        potency : can be 'indiv' for 'individual potency' as the substraction of rest connectivity (**niftipathrest is a path to a unique file**) or 'population' for population potency' as the standardization by the resting distribution (**niftipath is a list of path**)
         atlas4dpath : path to the nifti file with the atlas (one area per volume) 
         savepath : folder location to save a .npy file with the potency matrix
         savelevel : if ==2 will return rest and task normalized matrices

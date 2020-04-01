@@ -10,12 +10,17 @@ def selectionMM(mat,step=50,iteration=3,method='weighted_pFDR'):
     def norminit(x,stv1,stmu1):
         return scipy.stats.norm(stmu1,stv1).pdf(x)
     vecnorm2=np.vectorize(norm2)
-    pmin=0.05
+    pmin=0.025
     maxiters=100
     tol=0.000001 #relative tolerance for convergence
     MM=2 #2 is'GGM', 3 is 'GIM'
     #initial normalization
-    data=mat[np.triu_indices(number,1)]
+    try:
+        data=mat[np.triu_indices(number,1)]
+        tri=1
+    except:
+        data=copy.deepcopy(mat)
+        tri=0
     mini,stini=[np.mean(data),np.std(data)]
     data=(data-mini)/stini
     #run mm            
@@ -29,6 +34,7 @@ def selectionMM(mat,step=50,iteration=3,method='weighted_pFDR'):
             t=t2[:step]
             #find the values closest to the threshold (above and bellow 0.05)
             test=np.divide(2*vecnorm2(t,stmu1,stv1) , (np.mean(np.repeat([np.abs(data- stmu1)],step,0).T>=t-stmu1,0))  ) < pmin
+            
             limthr=np.max(np.where(test==False))
             init=t2[limthr]
             last=t2[limthr+1]
@@ -47,42 +53,57 @@ def selectionMM(mat,step=50,iteration=3,method='weighted_pFDR'):
         #up
         init=stmu1+2*stv1
         last=np.max(data)
-        for i in range(iteration):
-            t2=np.arange(init,last+(last-init)/step,(last-init)/step)
-            t=t2[:step]
+        try:
+            for i in range(iteration):
+                t2=np.arange(init,last+(last-init)/step,(last-init)/step)
+                t=t2[:step]
             #find the values closest to the threshold
-            test=np.divide(vecnorm2(t,stmu1,stv1) , (np.mean(np.repeat([(data- stmu1)],step,0).T>=t-stmu1,0))  ) < pmin1
-            if test[len(test)-1]==True:
-                limthrMax=len(test)-1
-            else:
-                limthrMax=np.max(np.where(test==False))
-            init=t2[limthrMax]
-            last=t2[limthrMax+1]
+                test=np.divide(vecnorm2(t,stmu1,stv1) , (np.mean(np.repeat([(data- stmu1)],step,0).T>=t-stmu1,0))  ) < pmin1
+            
+                if test[len(test)-1]==False:
+                    limthrMax=len(test)-1
+                else:
+                    limthrMax=np.max(np.where(test==False))
+                init=t2[limthrMax]
+                last=t2[limthrMax+1]
+        except:
+            init=init
         #down
+        
         init2=-(stmu1-2*stv1)
         last2=np.max(-data)
-        for i in range(iteration):
-            t2=np.arange(init2,last2+(last2-init2)/step,(last2-init2)/step)
-            t=t2[:step]
+        try:
+            for i in range(iteration):
+                t2=np.arange(init2,last2+(last2-init2)/step,(last2-init2)/step)
+                t=t2[:step]
             #find the values closest to the threshold
 
-            test=np.divide(vecnorm2(t,stmu1,stv1) , (np.mean(np.repeat([-(data- stmu1)],step,0).T>=t+stmu1,0))  ) < pmin2
-            if test[len(test)-1]==True:
-                limthrMin=len(test)-1
-            else:
-                limthrMin=np.max(np.where(test==False))
+                test=np.divide(vecnorm2(t,stmu1,stv1) , (np.mean(np.repeat([-(data- stmu1)],step,0).T>=t+stmu1,0))  ) < pmin2
             
-            init2=t2[limthrMin]
-            last2=t2[limthrMin]+(last2-init2)/step
+                if test[len(test)-1]==False:
+                    limthrMin=len(test)-1
+                else:
+                    limthrMin=np.max(np.where(test==False))
+            
+                init2=t2[limthrMin]
+                last2=t2[limthrMin]+(last2-init2)/step
+        except:
+            init2=init2
         
 
         selectionfromtriuIndex=[np.where((data>init)+(data<-init2)==1)]
         try:
-            tmax=np.min(mat[np.triu_indices(number,1)][np.where(mat[np.triu_indices(number,1)]>(init*stini+mini))])
+            if tri==1:
+                tmax=np.min(mat[np.triu_indices(number,1)][np.where(mat[np.triu_indices(number,1)]>(init*stini+mini))])
+            else:
+                tmax=np.min(mat[np.where(mat>(init*stini+mini))])
         except:
             tmax=np.inf
         try:
-            tmin=np.max(mat[np.triu_indices(number,1)][np.where(mat[np.triu_indices(number,1)]<((-init2+2*stmu1)*stini+mini))])
+            if tri==1:
+                tmin=np.max(mat[np.triu_indices(number,1)][np.where(mat[np.triu_indices(number,1)]<((-init2+2*stmu1)*stini+mini))])
+            else:
+                tmin=np.max(mat[np.where(mat<((-init2+2*stmu1)*stini+mini))])
         except:
             tmin=-np.inf
     

@@ -179,7 +179,7 @@ def mmfit3(x, maxiters,tol,MM):
 	it=0;
 	Nobj=sc.stats.norm(tmp_mu1,np.power(tmp_v1,0.5));
 	pGa=Nobj.pdf(x);
-	pGa[pGa==0]=np.power(10,-14);
+	pGa[pGa==0]=10**-14;
 	if MM==1:
 		1
 	elif MM==2:
@@ -191,9 +191,9 @@ def mmfit3(x, maxiters,tol,MM):
 	
 	dum2[xneg]=0;
 	dum3[xpos]=0; 
-	D1=np.multiply(np.ones(size(x))*tmp_PI[0],pGa); D1[np.where(D1<np.power(10,-14))]=eps
-	D2=np.multiply(np.ones(size(x))*tmp_PI[1],dum2);D2[np.where(D2<np.power(10,-14))]=eps
-	D3=np.multiply(np.ones(size(x))*tmp_PI[2],dum3);D3[np.where(D3<np.power(10,-14))]=eps
+	D1=np.multiply(np.ones(size(x))*tmp_PI[0],pGa); D1[np.where(D1<10**-14)]=eps
+	D2=np.multiply(np.ones(size(x))*tmp_PI[1],dum2);D2[np.where(D2<10**-14)]=eps
+	D3=np.multiply(np.ones(size(x))*tmp_PI[2],dum3);D3[np.where(D3<10**-14)]=eps
 	D=D1+D2+D3;
 	R1=np.divide(D1,np.ones(size(x))*D);
 	R2=np.divide(D2,np.ones(size(x))*D);
@@ -259,7 +259,7 @@ def mmfit3(x, maxiters,tol,MM):
 		#print 'it_num',it
 		Nobj=sc.stats.norm(tmp_mu1,np.power(tmp_v1,0.5));
 		pGa=Nobj.pdf(x);
-		pGa[pGa==0]=np.power(10,-14);
+		pGa[pGa==0]=10**-14;
 		if MM==1:
 			1
 		elif MM==2:
@@ -272,12 +272,12 @@ def mmfit3(x, maxiters,tol,MM):
 		dum2[xneg]=0;
 		dum3[xpos]=0; 
   
-		dum2[np.isnan(dum2)] = 0; dum2[np.isinf(dum2)] = 0;dum2[dum2==0]=np.power(10,-14)
-		dum3[np.isnan(dum3)] = 0; dum3[np.isinf(dum3)] = 0; dum3[dum3==0]=np.power(10,-14);
+		dum2[np.isnan(dum2)] = 0; dum2[np.isinf(dum2)] = 0;dum2[dum2==0]=10**-14
+		dum3[np.isnan(dum3)] = 0; dum3[np.isinf(dum3)] = 0; dum3[dum3==0]=10**-14;
             
-		D1=np.multiply(np.ones(size(x))*tmp_PI[0],pGa); D1[np.where(D1<np.power(10,-14))]=eps
-		D2=np.multiply(np.ones(size(x))*tmp_PI[1],dum2);D2[np.where(D2<np.power(10,-14))]=eps
-		D3=np.multiply(np.ones(size(x))*tmp_PI[2],dum3);D3[np.where(D3<np.power(10,-14))]=eps
+		D1=np.multiply(np.ones(size(x))*tmp_PI[0],pGa); D1[np.where(D1<10**-14)]=eps
+		D2=np.multiply(np.ones(size(x))*tmp_PI[1],dum2);D2[np.where(D2<10**-14)]=eps
+		D3=np.multiply(np.ones(size(x))*tmp_PI[2],dum3);D3[np.where(D3<10**-14)]=eps
 		#D3[xpos]=0;
   		#D2[xneg]=0;
 
@@ -295,7 +295,7 @@ def mmfit3(x, maxiters,tol,MM):
 		N[2]=sum(R3)
 		tmp_PI[0]=N[0]/sum(N)
 		tmp_PI[1]=N[1]/sum(N)
-		tmp_PI[2]=N[2]/sum(N)	;tmp_PI[np.where(tmp_PI<np.power(10,-14))]=eps;	
+		tmp_PI[2]=N[2]/sum(N)	;tmp_PI[np.where(tmp_PI<10**-14)]=eps;	
 		#tmp_lik[it]=sum( np.multiply(resp[:,0],(log(tmp_PI[0])+log(pGa))) + np.multiply(resp[:,1],(log(tmp_PI[1])+log(dum2)))  + np.multiply(resp[:,2],(log(tmp_PI[2])+log(dum3)))       );#bishop
 		real_lik[it]=sum(log(np.multiply(tmp_PI[0],pGa)+  np.multiply(tmp_PI[1],dum2)+ np.multiply(tmp_PI[2],dum3) )  )
 		trol=np.zeros([3,x.shape[0]])
