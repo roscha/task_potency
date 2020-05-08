@@ -408,7 +408,7 @@ def dynamic_potency(niftipathtask,niftipathrest,maskpathtask,maskpathrest,atlas4
 	#define rest connection that are positive, negative or no signal
 	[selection,tmin,tmax]=rcthresh.selectionMM(restmat)###**###
     signrestmat=np.zeros((number,number))###**###
-	prov=np.zeros(len(np.triu_indices(number,1)|0]))###**###
+	prov=np.zeros(len(np.triu_indices(number,1)[0]))###**###
 	prov=np.sign(restmat)[np.triu_indices(number,1)]###**###
 	prov[selection]=np.sign(restmat)[np.triu_indices(number,1)][selection]###**###
 	signrestmat[np.triu_indices(number,1)]=prov###**###

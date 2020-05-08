@@ -4,6 +4,7 @@ import scipy.integrate
 import alb_MM_functions as alb
 
 def selectionMM(mat,step=50,iteration=3,method='weighted_pFDR'):
+	#mat should be a 2D matrix NxN
     number=len(mat)
     def norm2(x,stmu1,stv1):
         return scipy.integrate.quad(norminit,x,np.inf,args=(stv1,stmu1))[0]
@@ -92,6 +93,11 @@ def selectionMM(mat,step=50,iteration=3,method='weighted_pFDR'):
         
 
         selectionfromtriuIndex=[np.where((data>init)+(data<-init2)==1)]
+		prov=np.zeros((number,number)) #prov would be a binary matrix with selected edges
+		prov2=np.zeros(len(np.triu_indices(number,1)))
+		prov2[selectionfromtriuIndex]=1
+		prov[np.triu_indices(number,1)]=prov2
+		prov=prov+prov.T
         try:
             if tri==1:
                 tmax=np.min(mat[np.triu_indices(number,1)][np.where(mat[np.triu_indices(number,1)]>(init*stini+mini))])
@@ -107,4 +113,4 @@ def selectionMM(mat,step=50,iteration=3,method='weighted_pFDR'):
         except:
             tmin=-np.inf
     
-    return selectionfromtriuIndex,tmin,tmax
+    return prov,selectionfromtriuIndex,tmin,tmax
